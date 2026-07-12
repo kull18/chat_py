@@ -40,14 +40,12 @@ class Server:
                 await websocket.send(message)
         except Exception as e:
             print(f"Error: {e}")
-        finally:
-            Server.clients.remove(websocket)
-            print(f"Client disconnected")
 
     async def run(self):
         try:
             async with websockets.serve(self.handler, "localhost", 8080) as server:
                 print("Server started")
+                asyncio.create_task(self.send_to_all())
                 await server.wait_closed()   
         except KeyboardInterrupt:       
             print("Server stopped")
