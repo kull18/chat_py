@@ -36,6 +36,13 @@ class Client:
         except Exception as e:
             print(f"Receive loop error: {e}")
 
+    async def read_server_message(self, websocket):
+        try:
+            async for message in websocket:
+                print(f"Received from server: {message}")
+        except Exception as e:
+            print(f"Error receiving message: {e}")
+
     async def connect(self):
         # Persistent connect + automatic reconnect on failure
         while True:
@@ -50,7 +57,7 @@ class Client:
                         print(f"Send error: {e}")
 
                     hb_task = asyncio.create_task(self._heartbeat(websocket))
-                    recv_task = asyncio.create_task(self._receive_loop(websocket))
+                    recv_task = asyncio.create_task(self.read_server_message(websocket))
 
                     _, pending = await asyncio.wait(
                         [hb_task, recv_task], return_when=asyncio.FIRST_EXCEPTION
