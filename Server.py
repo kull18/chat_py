@@ -1,3 +1,7 @@
+try:
+    from Message import Message
+except ImportError:
+    from .Message import Message
 
 try:
     import websockets
@@ -28,6 +32,11 @@ class Server:
             print(f"Client connected")
             async for message in websocket:
                 print(f"message {message}")
+
+                if message == "":
+                    print("Empty message received")
+                    continue
+
                 await websocket.send(message)
         except Exception as e:
             print(f"Error: {e}")
@@ -43,14 +52,14 @@ class Server:
         except KeyboardInterrupt:       
             print("Server stopped")
 
-    async def send_to_all(self, message):
+    async def send_to_all(self):
         while True:
             await asyncio.sleep(10)
 
 
             for client in Server.clients.copy():
                 try:
-                    message = f"Server: {message}"
+                    message = Message("Default Name", "Default Description")
                     await client.send(message)
                 except Exception as e:
                     print(f"Error: {e}")

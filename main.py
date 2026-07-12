@@ -5,7 +5,10 @@ __version__ = "1.0.0"
 __description__ = "server ws in py"
 
 
-from Server import Server
+try:
+    from Server import Server
+except ImportError:
+    from .Server import Server
 
 
 try:
@@ -20,4 +23,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
-    asyncio.create_task(main())
+    asyncio.create_task(Server.send_to_all)

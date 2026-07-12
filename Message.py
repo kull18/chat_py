@@ -1,10 +1,10 @@
 
 
 class Message:
-    
-    def __init__(self):
-        self.name: str
-        self.description: str
+
+    def __init__(self, name, description):
+        self.name: str = name
+        self.description: str = description
 
     def get_name(self) -> str:
         return self.name
