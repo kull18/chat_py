@@ -61,6 +61,7 @@ class Server:
                 try:
                     message = Message("Default Name", "Default Description")
                     await client.send(message)
+                    print(f"Message sent to client")
                 except Exception as e:
                     print(f"Error: {e}")
                     Server.clients.remove(client)
