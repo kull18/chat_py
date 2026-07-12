@@ -1,7 +1,16 @@
+try:
+    from Message import Message
+except ImportError:
+    from .Message import Message
 
-import websockets
 try:
     import websockets
+except ImportError as e:
+    print(f"Error: {e}")
+    exit(1)
+
+try:
+    import asyncio
 except ImportError as e:
     print(f"Error: {e}")
     exit(1)
@@ -23,6 +32,11 @@ class Server:
             print(f"Client connected")
             async for message in websocket:
                 print(f"message {message}")
+
+                if message == "":
+                    print("Empty message received")
+                    continue
+
                 await websocket.send(message)
         except Exception as e:
             print(f"Error: {e}")
@@ -38,11 +52,15 @@ class Server:
         except KeyboardInterrupt:       
             print("Server stopped")
 
-    async def broadcast(self):
-        for socket in Server.clients:
-            message = {
-                "name": "123"
-            }
-            print(f"send message to client...")
-            await socket.send(message.__dict__)
+    async def send_to_all(self):
+        while True:
+            await asyncio.sleep(10)
 
+
+            for client in Server.clients.copy():
+                try:
+                    message = Message("Default Name", "Default Description")
+                    await client.send(message)
+                except Exception as e:
+                    print(f"Error: {e}")
+                    Server.clients.remove(client)
